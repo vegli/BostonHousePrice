@@ -1,4 +1,151 @@
-<h1>
-    Hello World!
-    Hello again!
-</h1>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>House Price Prediction</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+      margin: 0;
+    }
+    
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    form {
+      max-width: 400px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    .form-header {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+    }
+    
+    button[type="submit"] {
+      background-color: #4caf50;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    
+    button[type="submit"]:hover {
+      background-color: #45a049;
+    }
+    
+    #prediction-result {
+      margin-top: 20px;
+      display: none;
+    }
+    
+    #predicted-price {
+        font-weight: bold;
+        font-size: 18px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>House Price Prediction</h1>
+  
+  <form id="prediction-form">
+    <div class="form-header">Please fill the required parameters:</div>
+    
+    <label for="rm">RM (Average number of rooms):</label>
+    <input type="text" id="rm" name="rm" required>
+    
+    <label for="lstat">LSTAT (% lower status of the population):</label>
+    <input type="text" id="lstat" name="lstat" required>
+    
+    <label for="ptratio">PTRATIO (Pupil-teacher ratio):</label>
+    <input type="text" id="ptratio" name="ptratio" required>
+    
+    <label for="indus">INDUS (Proportion of non-retail business acres per town):</label>
+    <input type="text" id="indus" name="indus" required>
+    
+    <label for="nox">NOX (Nitric oxides concentration):</label>
+    <input type="text" id="nox" name="nox" required>
+    
+    <label for="tax">TAX (Property tax rate per $10,000):</label>
+    <input type="text" id="tax" name="tax" required>
+    
+    <button type="submit">Predict</button>
+  </form>
+  
+  <div id="prediction-result">
+    <h2>Prediction Result:</h2>
+    <p id="predicted-price"></p>
+  </div>
+  
+  <script>
+    const form = document.getElementById('prediction-form');
+    const resultContainer = document.getElementById('prediction-result');
+    const predictedPrice = document.getElementById('predicted-price');
+  
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+  
+      const rm = parseFloat(document.getElementById('rm').value);
+      const lstat = parseFloat(document.getElementById('lstat').value);
+      const ptratio = parseFloat(document.getElementById('ptratio').value);
+      const indus = parseFloat(document.getElementById('indus').value);
+      const nox = parseFloat(document.getElementById('nox').value);
+      const tax = parseFloat(document.getElementById('tax').value);
+  
+      fetch('/predict_api', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          data: {
+            rm: rm,
+            lstat: lstat,
+            ptratio: ptratio,
+            indus: indus,
+            nox: nox,
+            tax: tax
+          }
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        predictedPrice.textContent = `Predicted Median Price (in 1000$): $${data}`;
+        resultContainer.style.display = 'block';
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    });
+  </script>
+  
+</body>
+
+
